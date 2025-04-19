@@ -7,119 +7,194 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        
         .gradient-bg {
-            background: linear-gradient(135deg, #6b46c1 0%, #4299e1 100%);
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
         }
-        .section-divider {
-            border-bottom: 2px dashed #e2e8f0;
-            margin: 2rem 0;
+        
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-out;
         }
-        .hover-scale {
-            transition: transform 0.3s ease;
+        
+        .mobile-menu.active {
+            transform: translateX(0);
         }
-        .hover-scale:hover {
-            transform: scale(1.02);
+        
+        .backdrop {
+            backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.2);
         }
-        .citation-badge {
-            font-size: 0.7rem;
-            vertical-align: super;
-            color: #4299e1;
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .content-container {
-            max-width: 1200px;
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
-        .sticky-nav {
-            position: sticky;
+        
+        .highlight-correction {
+            position: relative;
+            padding-left: 12px;
+        }
+        
+        .highlight-correction::before {
+            content: '';
+            position: absolute;
+            left: 0;
             top: 0;
-            z-index: 50;
-            backdrop-filter: blur(10px);
+            bottom: 0;
+            width: 4px;
+            background-color: #f59e0b;
+            border-radius: 2px;
         }
     </style>
 </head>
-<body class="bg-gray-50 font-sans antialiased">
-    <!-- Navigation -->
-    <nav class="sticky-nav bg-white/80 shadow-sm">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+<body class="bg-gray-50">
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenuOverlay" class="fixed inset-0 z-40 backdrop hidden"></div>
+    
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu fixed top-0 right-0 z-50 h-full w-64 bg-white shadow-lg p-4">
+        <div class="flex justify-between items-center mb-8">
             <div class="flex items-center space-x-2">
-                <i class="fas fa-server text-indigo-600 text-2xl"></i>
-                <span class="text-xl font-bold text-gray-800">Hosting Research</span>
+                <i class="fas fa-server text-indigo-600 text-xl"></i>
+                <span class="text-lg font-bold">Hosting Research</span>
             </div>
-            <div class="hidden md:flex space-x-6">
-                <a href="#overview" class="text-gray-700 hover:text-indigo-600 font-medium">Overview</a>
-                <a href="#features" class="text-gray-700 hover:text-indigo-600 font-medium">Features</a>
-                <a href="#pricing" class="text-gray-700 hover:text-indigo-600 font-medium">Pricing</a>
-                <a href="#reviews" class="text-gray-700 hover:text-indigo-600 font-medium">Reviews</a>
-                <a href="#conclusion" class="text-gray-700 hover:text-indigo-600 font-medium">Conclusion</a>
-            </div>
-            <button class="md:hidden text-gray-600">
-                <i class="fas fa-bars text-xl"></i>
+            <button id="closeMobileMenu" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times text-xl"></i>
             </button>
+        </div>
+        <nav class="space-y-4">
+            <a href="#overview" class="block px-4 py-2 rounded-lg bg-indigo-50 text-indigo-600 font-medium">
+                <i class="fas fa-info-circle mr-2"></i> Overview
+            </a>
+            <a href="#features" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                <i class="fas fa-star mr-2"></i> Features
+            </a>
+            <a href="#pricing" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                <i class="fas fa-tags mr-2"></i> Pricing
+            </a>
+            <a href="#reviews" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                <i class="fas fa-comments mr-2"></i> Reviews
+            </a>
+            <a href="#conclusion" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                <i class="fas fa-flag-checkered mr-2"></i> Conclusion
+            </a>
+        </nav>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-30 bg-white/80 shadow-sm backdrop-blur-sm">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-server text-indigo-600 text-2xl"></i>
+                    <span class="text-xl font-bold text-gray-800 hidden sm:block">Hosting Research</span>
+                </div>
+                
+                <div class="hidden md:flex space-x-6">
+                    <a href="#overview" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors">Overview</a>
+                    <a href="#features" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors">Features</a>
+                    <a href="#pricing" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors">Pricing</a>
+                    <a href="#reviews" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors">Reviews</a>
+                    <a href="#conclusion" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors">Conclusion</a>
+                </div>
+                
+                <button id="openMobileMenu" class="md:hidden text-gray-600 hover:text-gray-800">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <header class="gradient-bg text-white py-16">
-        <div class="container mx-auto px-4 text-center">
-            <h1 class="text-4xl md:text-5xl font-bold mb-6">MyOwnFreeHost & iFastNet Research</h1>
-            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">An In-Depth Analysis of iFastNet's Free Reseller Hosting Service</p>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="#overview" class="bg-white text-indigo-600 hover:bg-gray-100 font-semibold py-3 px-6 rounded-lg transition duration-300">
-                    <i class="fas fa-book-open mr-2"></i> Read Research
-                </a>
-                <a href="#conclusion" class="bg-indigo-700 hover:bg-indigo-800 text-white font-semibold py-3 px-6 rounded-lg transition duration-300">
-                    <i class="fas fa-arrow-down mr-2"></i> Key Findings
-                </a>
+    <header class="gradient-bg text-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-24">
+            <div class="max-w-3xl mx-auto text-center">
+                <h1 class="text-4xl sm:text-5xl font-bold leading-tight mb-6">
+                    MyOwnFreeHost & iFastNet Research
+                </h1>
+                <p class="text-xl sm:text-2xl mb-8 opacity-90">
+                    An In-Depth Analysis of iFastNet's Free Reseller Hosting Service
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="#overview" class="inline-flex items-center justify-center px-6 py-3 bg-white text-indigo-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-sm">
+                        <i class="fas fa-book-open mr-2"></i> Read Research
+                    </a>
+                    <a href="#conclusion" class="inline-flex items-center justify-center px-6 py-3 bg-indigo-700 text-white font-semibold rounded-lg hover:bg-indigo-800 transition-colors shadow-sm">
+                        <i class="fas fa-arrow-down mr-2"></i> Key Findings
+                    </a>
+                </div>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-12 content-container">
-    	
-    
-    
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <!-- Overview Section -->
         <section id="overview" class="mb-16">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden hover-scale">
-                <div class="p-8">
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover">
+                <div class="p-6 sm:p-8">
                     <div class="flex items-center mb-6">
                         <div class="bg-indigo-100 p-3 rounded-full mr-4">
-                            <i class="fas fa-info-circle text-indigo-600 text-2xl"></i>
+                            <i class="fas fa-info-circle text-indigo-600 text-xl sm:text-2xl"></i>
                         </div>
-                        <h2 class="text-3xl font-bold text-gray-800">Overview</h2>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Overview</h2>
                     </div>
-                    <p class="text-gray-600 mb-6 leading-relaxed">
-                        MyOwnFreeHost (MOFH) represents a unique offering within the web hosting landscape, providing individuals with the opportunity to establish their own free web hosting companies. Launched in 2007 by Byet Internet, a company with a substantial history in the web hosting sector, MOFH operates as a reseller service under the umbrella of its parent company, iFastNet.<span class="citation-badge">1</span>
-                    </p>
-                    <p class="text-gray-600 mb-6 leading-relaxed">
-                        The core principle behind MOFH is to equip users with the necessary infrastructure and tools to offer free hosting services under their own brand name, primarily targeting those who wish to enter the hosting market without significant initial investment.<span class="citation-badge">1</span> While this model presents an attractive entry point, a comprehensive understanding of MOFH requires examining its features, the role of iFastNet, user experiences, pricing structures, legal frameworks, and its position relative to other hosting providers.
-                    </p>
-                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                    
+                    <div class="space-y-4 text-gray-600 leading-relaxed">
+                        <p>
+                            MyOwnFreeHost (MOFH) represents a unique offering within the web hosting landscape, providing individuals with the opportunity to establish their own free web hosting companies. Launched in 2007 by Byet Internet, a company with a substantial history in the web hosting sector, MOFH operates as a reseller service under the umbrella of its parent company, iFastNet.
+                        </p>
+                        
+                        <p>
+                            The core principle behind MOFH is to equip users with the necessary infrastructure and tools to offer free hosting services under their own brand name, primarily targeting those who wish to enter the hosting market without significant initial investment.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 my-6 rounded-r-lg">
                         <div class="flex">
-                            <div class="flex-shrink-0">
+                            <div class="flex-shrink-0 pt-1">
                                 <i class="fas fa-lightbulb text-blue-500"></i>
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm text-blue-700">
-                                    <strong>Key Insight:</strong> MOFH is not an independent entity but rather a reseller service offered by iFastNet.<span class="citation-badge">2</span> Discussions and community support related to MOFH can often be found on platforms like the Byet.net forum.<span class="citation-badge">5</span>
+                                    <strong>Key Insight:</strong> MOFH is not an independent entity but rather a reseller service offered by iFastNet. Discussions and community support related to MOFH can often be found on platforms like the Byet.net forum.
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div class="bg-gray-50 p-6 rounded-lg">
-                            <h3 class="font-semibold text-lg text-gray-800 mb-3 flex items-center">
-                                <i class="fas fa-history text-indigo-500 mr-2"></i> Established History
-                            </h3>
-                            <p class="text-gray-600">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                        <div class="bg-gray-50 p-4 sm:p-6 rounded-lg">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-indigo-100 p-2 rounded-full mr-3">
+                                    <i class="fas fa-history text-indigo-500"></i>
+                                </div>
+                                <h3 class="font-semibold text-lg text-gray-800">Established History</h3>
+                            </div>
+                            <p class="text-gray-600 text-sm sm:text-base">
                                 The long-standing presence of Byet Internet, dating back to 2007, implies considerable experience in the free hosting domain, which could translate to a degree of reliability.
                             </p>
                         </div>
-                        <div class="bg-gray-50 p-6 rounded-lg">
-                            <h3 class="font-semibold text-lg text-gray-800 mb-3 flex items-center">
-                                <i class="fas fa-users text-indigo-500 mr-2"></i> Community Support
-                            </h3>
-                            <p class="text-gray-600">
+                        
+                        <div class="bg-gray-50 p-4 sm:p-6 rounded-lg">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-indigo-100 p-2 rounded-full mr-3">
+                                    <i class="fas fa-users text-indigo-500"></i>
+                                </div>
+                                <h3 class="font-semibold text-lg text-gray-800">Community Support</h3>
+                            </div>
+                            <p class="text-gray-600 text-sm sm:text-base">
                                 The existence of a dedicated forum like Byet.net fosters a sense of community among users and resellers, offering a valuable avenue for support and information exchange.
                             </p>
                         </div>
@@ -130,93 +205,102 @@
 
         <!-- Features Section -->
         <section id="features" class="mb-16">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden hover-scale">
-                <div class="p-8">
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover">
+                <div class="p-6 sm:p-8">
                     <div class="flex items-center mb-6">
                         <div class="bg-indigo-100 p-3 rounded-full mr-4">
-                            <i class="fas fa-star text-indigo-600 text-2xl"></i>
+                            <i class="fas fa-star text-indigo-600 text-xl sm:text-2xl"></i>
                         </div>
-                        <h2 class="text-3xl font-bold text-gray-800">Key Features</h2>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Key Features</h2>
                     </div>
                     
-                    <div class="mb-8">
-                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Reseller Benefits</h3>
-                        <p class="text-gray-600 mb-6 leading-relaxed">
-                            For individuals choosing to become resellers through MyOwnFreeHost, the platform offers a compelling "unlimited package." This includes unlimited disk space, bandwidth, hosted domains, and MySQL databases for the reseller's overall operation.<span class="citation-badge">1</span> This abundance of resources at the reseller level aims to remove concerns about limitations as their hosting business grows.
-                        </p>
-                        
-                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                            <div class="bg-gray-50 p-5 rounded-lg">
-                                <div class="text-indigo-500 mb-3">
-                                    <i class="fas fa-tag text-2xl"></i>
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Reseller Benefits</h3>
+                            <p class="text-gray-600 mb-6 leading-relaxed">
+                                For individuals choosing to become resellers through MyOwnFreeHost, the platform offers a compelling "unlimited package." This includes unlimited disk space, bandwidth, hosted domains, and MySQL databases for the reseller's overall operation.
+                            </p>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                                <div class="bg-gray-50 p-4 sm:p-5 rounded-lg">
+                                    <div class="text-indigo-500 mb-3">
+                                        <i class="fas fa-tag text-xl"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-lg mb-2">White-Labeling</h4>
+                                    <p class="text-gray-600 text-sm">
+                                        MOFH offers white-labeling capabilities, allowing resellers to brand the system with their own company name and domain. However, resellers must display iFastNet promotion on their websites and include iFastNet upgrade offers in the control panel.
+                                    </p>
                                 </div>
-                                <h4 class="font-semibold text-lg mb-2">White-Labeling</h4>
-                                <p class="text-gray-600 text-sm">
-                                    A significant advantage of MOFH is its white-labeling capability, which allows resellers to fully brand the system with their own company name and domain.
-                                </p>
-                            </div>
-                            <div class="bg-gray-50 p-5 rounded-lg">
-                                <div class="text-indigo-500 mb-3">
-                                    <i class="fas fa-ad text-2xl"></i>
+                                
+                                <div class="bg-gray-50 p-4 sm:p-5 rounded-lg">
+                                    <div class="text-indigo-500 mb-3">
+                                        <i class="fas fa-ad text-xl"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-lg mb-2">Advertising Integration</h4>
+                                    <p class="text-gray-600 text-sm">
+                                        While MOFH allows resellers to incorporate advertising code like Google AdSense, there are significant limitations. AdSense requires per-domain approval and ads.txt file setup, which the testcookie system may interfere with. Additionally, injecting ad code into user websites risks account termination if ads appear on prohibited content.⁹
+                                    </p>
                                 </div>
-                                <h4 class="font-semibold text-lg mb-2">Advertising Integration</h4>
-                                <p class="text-gray-600 text-sm">
-                                    MOFH provides for resellers to incorporate their own advertising code, such as Google Adsense, into the web pages and control panels of their free hosting clients.
-                                </p>
-                            </div>
-                            <div class="bg-gray-50 p-5 rounded-lg">
-                                <div class="text-indigo-500 mb-3">
-                                    <i class="fas fa-headset text-2xl"></i>
-                                </div>
-                                <h4 class="font-semibold text-lg mb-2">Support System</h4>
-                                <p class="text-gray-600 text-sm">
-                                    MOFH includes a free, white-labeled support system that enables clients to directly contact the reseller for assistance.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="section-divider"></div>
-                    
-                    <div>
-                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">iFastNet Infrastructure</h3>
-                        <p class="text-gray-600 mb-6 leading-relaxed">
-                            The underlying infrastructure and support for MyOwnFreeHost are provided by its parent company, iFastNet.<span class="citation-badge">2</span> iFastNet offers a diverse range of premium hosting services, including options like Super Premium, Ultimate Premium, VPS Servers, and Dedicated Servers, catering to users with more demanding needs.<span class="citation-badge">6</span>
-                        </p>
-                        
-                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-                            <div class="flex">
-                                <div class="flex-shrink-0">
-                                    <i class="fas fa-exclamation-triangle text-yellow-500"></i>
-                                </div>
-                                <div class="ml-3">
-                                    <p class="text-sm text-yellow-700">
-                                        <strong>Important Note:</strong> The reliability and effectiveness of MyOwnFreeHost are intrinsically linked to the quality of infrastructure and support provided by iFastNet, making iFastNet's reputation a key factor in evaluating MOFH.
+                                
+                                <div class="bg-gray-50 p-4 sm:p-5 rounded-lg">
+                                    <div class="text-indigo-500 mb-3">
+                                        <i class="fas fa-headset text-xl"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-lg mb-2">Support System</h4>
+                                    <p class="text-gray-600 text-sm">
+                                        MOFH includes a free, white-labeled support system that enables clients to directly contact the reseller for assistance.
                                     </p>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div class="bg-gray-50 p-6 rounded-lg">
-                                <h3 class="font-semibold text-lg text-gray-800 mb-3 flex items-center">
-                                    <i class="fas fa-shield-alt text-indigo-500 mr-2"></i> Premium Features
-                                </h3>
-                                <ul class="list-disc pl-5 text-gray-600 space-y-2">
-                                    <li>High-speed SSD servers</li>
-                                    <li>Generous bandwidth allocations</li>
-                                    <li>Complimentary SSL certificates</li>
-                                    <li>Free domain registrations</li>
-                                    <li>Integrated CloudFlare support</li>
-                                </ul>
+                        <div class="border-t border-gray-200 pt-6">
+                            <h3 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">iFastNet Infrastructure</h3>
+                            <p class="text-gray-600 mb-6 leading-relaxed">
+                                The underlying infrastructure and support for MyOwnFreeHost are provided by its parent company, iFastNet. iFastNet offers a diverse range of premium hosting services, including options like Super Premium, Ultimate Premium, VPS Servers, and Dedicated Servers, catering to users with more demanding needs.
+                            </p>
+                            
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded-r-lg">
+                                <div class="flex">
+                                    <div class="flex-shrink-0 pt-1">
+                                        <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-yellow-700">
+                                            <strong>Important Note:</strong> The reliability and effectiveness of MyOwnFreeHost are intrinsically linked to the quality of infrastructure and support provided by iFastNet, making iFastNet's reputation a key factor in evaluating MOFH.
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="bg-gray-50 p-6 rounded-lg">
-                                <h3 class="font-semibold text-lg text-gray-800 mb-3 flex items-center">
-                                    <i class="fas fa-hand-holding-usd text-indigo-500 mr-2"></i> Business Model
-                                </h3>
-                                <p class="text-gray-600">
-                                    By offering both a free reseller platform (MOFH) and a range of premium hosting options, iFastNet employs a tiered business strategy aimed at attracting a broad spectrum of users, from those prioritizing zero cost to those requiring enhanced performance and features.
-                                </p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                                <div class="bg-gray-50 p-4 sm:p-6 rounded-lg">
+                                    <div class="flex items-center mb-3">
+                                        <div class="bg-indigo-100 p-2 rounded-full mr-3">
+                                            <i class="fas fa-shield-alt text-indigo-500"></i>
+                                        </div>
+                                        <h3 class="font-semibold text-lg text-gray-800">Premium Features</h3>
+                                    </div>
+                                    <ul class="list-disc pl-5 text-gray-600 space-y-2 text-sm sm:text-base">
+                                        <li>SSD storage (now standard across most hosting providers)⁹</span></li>
+                                        <li>Generous bandwidth allocations</li>
+                                        <li>Complimentary SSL certificates</li>
+                                        <li>Free domain registrations</li>
+                                        <li>Note: CloudFlare cPanel integration and Railgun are no longer available⁹</span></li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-gray-50 p-4 sm:p-6 rounded-lg">
+                                    <div class="flex items-center mb-3">
+                                        <div class="bg-indigo-100 p-2 rounded-full mr-3">
+                                            <i class="fas fa-hand-holding-usd text-indigo-500"></i>
+                                        </div>
+                                        <h3 class="font-semibold text-lg text-gray-800">Business Model</h3>
+                                    </div>
+                                    <p class="text-gray-600 text-sm sm:text-base">
+                                        The only reason MOFH is free is that it helps bring paying customers to iFastNet. By offering both a free reseller platform (MOFH) and a range of premium hosting options, iFastNet employs a tiered business strategy aimed at attracting a broad spectrum of users.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -226,29 +310,29 @@
 
         <!-- User Reviews Section -->
         <section id="reviews" class="mb-16">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden hover-scale">
-                <div class="p-8">
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover">
+                <div class="p-6 sm:p-8">
                     <div class="flex items-center mb-6">
                         <div class="bg-indigo-100 p-3 rounded-full mr-4">
-                            <i class="fas fa-comments text-indigo-600 text-2xl"></i>
+                            <i class="fas fa-comments text-indigo-600 text-xl sm:text-2xl"></i>
                         </div>
-                        <h2 class="text-3xl font-bold text-gray-800">User Experiences</h2>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">User Experiences</h2>
                     </div>
                     
                     <p class="text-gray-600 mb-6 leading-relaxed">
-                        To gain a balanced perspective on MyOwnFreeHost, it is essential to consider the experiences and opinions of its users, gathered from various online platforms such as the Byet.net and InfinityFree forums<span class="citation-badge">3</span>, Reddit<span class="citation-badge">4</span>, and dedicated review websites.<span class="citation-badge">10</span> Notably, InfinityFree stands out as a popular free hosting provider that utilizes MyOwnFreeHost's reseller service, indicating the reach and influence of the MOFH platform within the free hosting community.<span class="citation-badge">3</span>
+                        To gain a balanced perspective on MyOwnFreeHost, it is essential to consider the experiences and opinions of its users, gathered from various online platforms such as the Byet.net and InfinityFree forums, Reddit, and dedicated review websites.
                     </p>
                     
-                    <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-8">
                         <div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                            <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-4 flex items-center">
                                 <i class="fas fa-thumbs-up text-green-500 mr-2"></i> Positive Feedback
                             </h3>
                             <div class="space-y-4">
                                 <div class="bg-green-50 p-4 rounded-lg">
                                     <div class="flex items-start">
-                                        <div class="flex-shrink-0">
-                                            <i class="fas fa-user-circle text-green-500 text-xl"></i>
+                                        <div class="flex-shrink-0 pt-1">
+                                            <i class="fas fa-user-circle text-green-500"></i>
                                         </div>
                                         <div class="ml-3">
                                             <p class="text-sm text-green-700">
@@ -259,8 +343,8 @@
                                 </div>
                                 <div class="bg-green-50 p-4 rounded-lg">
                                     <div class="flex items-start">
-                                        <div class="flex-shrink-0">
-                                            <i class="fas fa-user-circle text-green-500 text-xl"></i>
+                                        <div class="flex-shrink-0 pt-1">
+                                            <i class="fas fa-user-circle text-green-500"></i>
                                         </div>
                                         <div class="ml-3">
                                             <p class="text-sm text-green-700">
@@ -271,15 +355,16 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                            <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-4 flex items-center">
                                 <i class="fas fa-thumbs-down text-red-500 mr-2"></i> Negative Feedback
                             </h3>
                             <div class="space-y-4">
                                 <div class="bg-red-50 p-4 rounded-lg">
                                     <div class="flex items-start">
-                                        <div class="flex-shrink-0">
-                                            <i class="fas fa-user-circle text-red-500 text-xl"></i>
+                                        <div class="flex-shrink-0 pt-1">
+                                            <i class="fas fa-user-circle text-red-500"></i>
                                         </div>
                                         <div class="ml-3">
                                             <p class="text-sm text-red-700">
@@ -290,8 +375,8 @@
                                 </div>
                                 <div class="bg-red-50 p-4 rounded-lg">
                                     <div class="flex items-start">
-                                        <div class="flex-shrink-0">
-                                            <i class="fas fa-user-circle text-red-500 text-xl"></i>
+                                        <div class="flex-shrink-0 pt-1">
+                                            <i class="fas fa-user-circle text-red-500"></i>
                                         </div>
                                         <div class="ml-3">
                                             <p class="text-sm text-red-700">
@@ -304,14 +389,14 @@
                         </div>
                     </div>
                     
-                    <div class="bg-purple-50 border-l-4 border-purple-400 p-4 mb-6">
+                    <div class="bg-purple-50 border-l-4 border-purple-400 p-4 rounded-r-lg">
                         <div class="flex">
-                            <div class="flex-shrink-0">
+                            <div class="flex-shrink-0 pt-1">
                                 <i class="fas fa-chart-line text-purple-500"></i>
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm text-purple-700">
-                                    <strong>Market Position:</strong> In the competitive landscape of web hosting, MyOwnFreeHost occupies a unique position as a provider of free reseller hosting. When comparing its free plan with other direct free web hosting providers like InfinityFree, GoogieHost, Freehostia, FreeHosting, and 000webhost<span class="citation-badge">3</span>, certain distinctions emerge in terms of features and limitations.
+                                    <strong>Market Position:</strong> In the competitive landscape of web hosting, MyOwnFreeHost occupies a unique position as a provider of free reseller hosting. When comparing its free plan with other direct free web hosting providers, certain distinctions emerge in terms of features and limitations.
                                 </p>
                             </div>
                         </div>
@@ -322,72 +407,89 @@
 
         <!-- Pricing Section -->
         <section id="pricing" class="mb-16">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden hover-scale">
-                <div class="p-8">
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover">
+                <div class="p-6 sm:p-8">
                     <div class="flex items-center mb-6">
                         <div class="bg-indigo-100 p-3 rounded-full mr-4">
-                            <i class="fas fa-tags text-indigo-600 text-2xl"></i>
+                            <i class="fas fa-tags text-indigo-600 text-xl sm:text-2xl"></i>
                         </div>
-                        <h2 class="text-3xl font-bold text-gray-800">Pricing Structure</h2>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Pricing Structure</h2>
                     </div>
                     
                     <p class="text-gray-600 mb-6 leading-relaxed">
-                        A key aspect of MyOwnFreeHost is its pricing structure, particularly the fact that it allows users to launch a web hosting company without any initial financial outlay.<span class="citation-badge">1</span> The free plan for resellers comes with an impressive set of "unlimited" features, including unlimited reseller accounts, disk space, bandwidth, databases, and domains.<span class="citation-badge">1</span>
+                        A key aspect of MyOwnFreeHost is its pricing structure, particularly the fact that it allows users to launch a web hosting company without any initial financial outlay. The free plan for resellers comes with an impressive set of "unlimited" features.
                     </p>
                     
-                    <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-8">
                         <div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4">Reseller Benefits</h3>
+                            <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-4">Reseller Benefits</h3>
                             <ul class="space-y-3">
                                 <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                    </div>
                                     <span>No upfront costs to become a reseller</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                    </div>
                                     <span>5% commission on paid hosting upgrades</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                    </div>
                                     <span>Ability to integrate own advertising</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                    </div>
                                     <span>White-label branding options</span>
                                 </li>
                             </ul>
                         </div>
+                        
                         <div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4">End-User Limitations</h3>
+                            <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-4">End-User Limitations</h3>
                             <ul class="space-y-3">
                                 <li class="flex items-start">
-                                    <i class="fas fa-info-circle text-blue-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                                    </div>
                                     <span>5 GB disk space (configurable by reseller)</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-info-circle text-blue-500 mt-1 mr-2"></i>
-                                    <span>100 GB monthly bandwidth</span>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                                    </div>
+                                    <span>No enforced bandwidth limits in practice⁹</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-info-circle text-blue-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                                    </div>
                                     <span>Maximum of 400 databases</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-info-circle text-blue-500 mt-1 mr-2"></i>
-                                    <span>Up to 50 domains hosted</span>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                                    </div>
+                                    <span>No limit on addon domains (only 50 subdomains limit)⁹</span>
                                 </li>
                             </ul>
                         </div>
                     </div>
                     
-                    <div class="bg-orange-50 border-l-4 border-orange-400 p-4">
+                    <div class="bg-orange-50 border-l-4 border-orange-400 p-4 rounded-r-lg">
                         <div class="flex">
-                            <div class="flex-shrink-0">
+                            <div class="flex-shrink-0 pt-1">
                                 <i class="fas fa-exclamation-circle text-orange-500"></i>
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm text-orange-700">
-                                    <strong>Important Consideration:</strong> The "free" nature of MOFH primarily pertains to the reseller account itself. While resellers can offer free hosting to their clients, there might be associated costs or restrictions for those free accounts, such as the potential need for a custom domain or limitations on resources.
+                                    <strong>Important Consideration:</strong> The "free" nature of MOFH primarily pertains to the reseller account itself. While resellers can offer free hosting to their clients, there might be associated costs or restrictions for those free accounts.
                                 </p>
                             </div>
                         </div>
@@ -398,58 +500,75 @@
 
         <!-- Legal Section -->
         <section class="mb-16">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden hover-scale">
-                <div class="p-8">
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover">
+                <div class="p-6 sm:p-8">
                     <div class="flex items-center mb-6">
                         <div class="bg-indigo-100 p-3 rounded-full mr-4">
-                            <i class="fas fa-gavel text-indigo-600 text-2xl"></i>
+                            <i class="fas fa-gavel text-indigo-600 text-xl sm:text-2xl"></i>
                         </div>
-                        <h2 class="text-3xl font-bold text-gray-800">Legal Framework</h2>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Legal Framework</h2>
                     </div>
                     
                     <p class="text-gray-600 mb-6 leading-relaxed">
-                        The legal framework governing the use of MyOwnFreeHost is outlined in its Terms of Service (TOS), which is provided by iFastNet as the reseller service provider. The most current version of the TOS can be accessed at <a href="http://byethost.com/legal.php" class="text-indigo-600 hover:underline">http://byethost.com/legal.php</a>.<span class="citation-badge">2</span>
+                        The legal framework governing the use of MyOwnFreeHost is outlined in its Terms of Service (TOS), which is provided by iFastNet as the reseller service provider. The most current version of the TOS can be accessed at <a href="http://byethost.com/legal.php" class="text-indigo-600 hover:underline">http://byethost.com/legal.php</a>.
                     </p>
                     
-                    <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
                         <div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4">Key TOS Provisions</h3>
+                            <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-4">Key TOS Provisions</h3>
                             <ul class="space-y-3">
                                 <li class="flex items-start">
-                                    <i class="fas fa-ban text-red-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-ban text-red-500 mr-2"></i>
+                                    </div>
                                     <span>Prohibition of unlawful, harmful, or infringing content</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-server text-blue-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-server text-blue-500 mr-2"></i>
+                                    </div>
                                     <span>Policy against excessive resource usage</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-user-shield text-green-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-user-shield text-green-500 mr-2"></i>
+                                    </div>
                                     <span>Age restrictions (generally 16+)</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-id-card text-purple-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-id-card text-purple-500 mr-2"></i>
+                                    </div>
                                     <span>Limit of three free hosting accounts per individual</span>
                                 </li>
                             </ul>
                         </div>
+                        
                         <div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4">Privacy Policy Highlights</h3>
+                            <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-4">Privacy Policy Highlights</h3>
                             <ul class="space-y-3">
                                 <li class="flex items-start">
-                                    <i class="fas fa-database text-blue-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-database text-blue-500 mr-2"></i>
+                                    </div>
                                     <span>Collection of personal data including names, addresses, and contact information</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-shield-alt text-green-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-shield-alt text-green-500 mr-2"></i>
+                                    </div>
                                     <span>Data security measures implementation</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-user-edit text-purple-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-user-edit text-purple-500 mr-2"></i>
+                                    </div>
                                     <span>User rights to access, update, or delete personal information</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-handshake text-orange-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-handshake text-orange-500 mr-2"></i>
+                                    </div>
                                     <span>Information sharing with trusted third parties for services like payment processing</span>
                                 </li>
                             </ul>
@@ -461,76 +580,93 @@
 
         <!-- Conclusion Section -->
         <section id="conclusion" class="mb-16">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden hover-scale">
-                <div class="p-8">
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover">
+                <div class="p-6 sm:p-8">
                     <div class="flex items-center mb-6">
                         <div class="bg-indigo-100 p-3 rounded-full mr-4">
-                            <i class="fas fa-flag-checkered text-indigo-600 text-2xl"></i>
+                            <i class="fas fa-flag-checkered text-indigo-600 text-xl sm:text-2xl"></i>
                         </div>
-                        <h2 class="text-3xl font-bold text-gray-800">Conclusion</h2>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Conclusion</h2>
                     </div>
                     
                     <p class="text-gray-600 mb-6 leading-relaxed">
-                        In conclusion, MyOwnFreeHost, a reseller service provided by iFastNet, offers a distinctive platform for individuals to launch their own free web hosting companies. It provides resellers with an attractive "unlimited" resource package and white-labeling capabilities, facilitating entry into the hosting market without upfront costs. However, potential users, both those seeking to become resellers and individuals looking for free web hosting, should be aware of the potential limitations that often accompany free services.
+                        In conclusion, MyOwnFreeHost, a reseller service provided by iFastNet, offers a distinctive platform for individuals to launch their own free web hosting companies. It provides resellers with an attractive "unlimited" resource package and white-labeling capabilities, facilitating entry into the hosting market without upfront costs.
                     </p>
                     
-                    <div class="grid md:grid-cols-2 gap-8 mb-8">
-                        <div class="bg-gray-50 p-6 rounded-lg">
-                            <h3 class="font-semibold text-xl text-gray-800 mb-4 flex items-center">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-8">
+                        <div class="bg-gray-50 p-4 sm:p-6 rounded-lg">
+                            <h3 class="font-semibold text-lg sm:text-xl text-gray-800 mb-4 flex items-center">
                                 <i class="fas fa-check-circle text-green-500 mr-2"></i> Advantages
                             </h3>
                             <ul class="space-y-3 text-gray-600">
                                 <li class="flex items-start">
-                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-check text-green-500 mr-2"></i>
+                                    </div>
                                     <span>No upfront costs for resellers</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-check text-green-500 mr-2"></i>
+                                    </div>
                                     <span>Comprehensive white-label branding</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-check text-green-500 mr-2"></i>
+                                    </div>
                                     <span>Monetization through advertising and commissions</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-check text-green-500 mr-2"></i>
+                                    </div>
                                     <span>Established infrastructure from iFastNet</span>
                                 </li>
                             </ul>
                         </div>
-                        <div class="bg-gray-50 p-6 rounded-lg">
-                            <h3 class="font-semibold text-xl text-gray-800 mb-4 flex items-center">
+                        
+                        <div class="bg-gray-50 p-4 sm:p-6 rounded-lg">
+                            <h3 class="font-semibold text-lg sm:text-xl text-gray-800 mb-4 flex items-center">
                                 <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i> Considerations
                             </h3>
                             <ul class="space-y-3 text-gray-600">
                                 <li class="flex items-start">
-                                    <i class="fas fa-times text-red-500 mt-1 mr-2"></i>
-                                    <span>Potential resource limitations for end-users</span>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-times text-red-500 mr-2"></i>
+                                    </div>
+                                    <span>Requirement to display iFastNet promotions</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-times text-red-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-times text-red-500 mr-2"></i>
+                                    </div>
+                                    <span>Practical limitations with advertising integration</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-times text-red-500 mr-2"></i>
+                                    </div>
                                     <span>Variable support quality</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-times text-red-500 mt-1 mr-2"></i>
-                                    <span>Strict terms of service enforcement</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-times text-red-500 mt-1 mr-2"></i>
+                                    <div class="flex-shrink-0 mt-1">
+                                        <i class="fas fa-times text-red-500 mr-2"></i>
+                                    </div>
                                     <span>Dependence on iFastNet's infrastructure</span>
                                 </li>
                             </ul>
                         </div>
                     </div>
                     
-                    <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4">
+                    <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded-r-lg">
                         <div class="flex">
-                            <div class="flex-shrink-0">
+                            <div class="flex-shrink-0 pt-1">
                                 <i class="fas fa-lightbulb text-indigo-500"></i>
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm text-indigo-700">
-                                    <strong>Final Recommendation:</strong> For those interested in starting a free reseller hosting business, MOFH presents a compelling opportunity with its comprehensive feature set. However, individuals seeking free web hosting should research resellers utilizing the MOFH platform and carefully consider the potential trade-offs compared to direct free hosting providers or paid alternatives. A thorough review of the terms of service and privacy policies is strongly recommended.
+                                    <strong>Final Recommendation:</strong> For those interested in starting a free reseller hosting business, MOFH presents a compelling opportunity with its comprehensive feature set. However, individuals seeking free web hosting should research resellers utilizing the MOFH platform and carefully consider the potential trade-offs compared to direct free hosting providers or paid alternatives.
                                 </p>
                             </div>
                         </div>
@@ -539,27 +675,32 @@
             </div>
         </section>
 
-<div role="alert" style="border-left: 5px solid #f0ad4e; background-color: #fff3cd; padding: 15px 20px; margin: 20px 0; font-family: system-ui, sans-serif;">
-    <p style="margin: 0 0 5px 0; font-weight: bold; font-size: 1rem;">⚠️ Have a suggestion?</p>
-    <p style="margin: 5px 0 0 0; font-size: 0.9rem; line-height: 1.5;">
-        If you come across something you'd like improved or have an idea to enhance the research,
-        <strong>feel free to share it in the
-        <a href="https://github.com/druvx13/mofh-research/issues" style="color: #c56c00; text-decoration: underline; font-weight: bold;">Issues</a> section</strong>
-        of the GitHub repository.
-    </p>
-    <p style="margin: 5px 0 0 0; font-size: 0.9rem; line-height: 1.5;">Your feedback helps improve this research for everyone. Thanks a lot!</p>
-</div>
-
+        <!-- Feedback Section -->
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 sm:p-6 rounded-r-lg mb-16">
+            <div class="flex">
+                <div class="flex-shrink-0 pt-1">
+                    <i class="fas fa-exclamation-circle text-yellow-500"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm sm:text-base font-semibold text-yellow-800 mb-1">Have a suggestion?</h3>
+                    <p class="text-sm text-yellow-700">
+                        If you come across something you'd like improved or have an idea to enhance the research,
+                        <a href="https://github.com/druvx13/mofh-research/issues" class="font-medium text-yellow-900 underline hover:text-yellow-800">feel free to share it in the Issues section</a>
+                        of the GitHub repository. Your feedback helps improve this research for everyone. Thanks a lot!
+                    </p>
+                </div>
+            </div>
+        </div>
 
         <!-- Citations Section -->
         <section class="mb-16">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden hover-scale">
-                <div class="p-8">
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover">
+                <div class="p-6 sm:p-8">
                     <div class="flex items-center mb-6">
                         <div class="bg-indigo-100 p-3 rounded-full mr-4">
-                            <i class="fas fa-book text-indigo-600 text-2xl"></i>
+                            <i class="fas fa-book text-indigo-600 text-xl sm:text-2xl"></i>
                         </div>
-                        <h2 class="text-3xl font-bold text-gray-800">Works Cited</h2>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Works Cited</h2>
                     </div>
                     
                     <div class="space-y-3 text-sm text-gray-600">
@@ -571,6 +712,8 @@
                         <p>6. Web Hosting, Domain Registration, Dedicated Server, VPS Server, accessed on April 17, 2025, <a href="https://ifastnet.com/" class="text-indigo-600 hover:underline break-all">https://ifastnet.com/</a></p>
                         <p>7. Privacy Policy - IFastNet LTD, accessed on April 17, 2025, <a href="https://ifastnet.com/privacy.php" class="text-indigo-600 hover:underline break-all">https://ifastnet.com/privacy.php</a></p>
                         <p>8. iFastNet Reviews - 2025 - Slashdot, accessed on April 17, 2025, <a href="https://slashdot.org/software/p/iFastNet/" class="text-indigo-600 hover:underline break-all">https://slashdot.org/software/p/iFastNet/</a></p>
+                        <p>9. All You Need to Know About MOFH (MyOwnFreeHost) - Informal - InfinityFree Forum, accessed on April 19, 2025, <a href="https://forum.infinityfree.com/t/all-you-need-to-know-about-mofh-myownfreehost/108948/9?u=druvx13" class="text-indigo-600 hover:underline break-all">https://forum.infinityfree.com/t/all-you-need-to-know-about-mofh-myownfreehost/108948/9?u=druvx13</a></p>
+ 
                     </div>
                 </div>
             </div>
@@ -579,45 +722,113 @@
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-12">
-        <div class="container mx-auto px-4">
-            <div class="grid md:grid-cols-3 gap-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
-                    <h3 class="text-xl font-semibold mb-4">About This Research</h3>
-                    <p class="text-gray-300">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-4">About This Research</h3>
+                    <p class="text-gray-300 text-sm sm:text-base">
                         This comprehensive analysis of MyOwnFreeHost and iFastNet was conducted in April 2025, examining the features, benefits, and limitations of this free reseller hosting platform.
                     </p>
                 </div>
+                
                 <div>
-                    <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
+                    <h3 class="text-lg sm:text-xl font-semibold mb-4">Quick Links</h3>
                     <ul class="space-y-2">
-                        <li><a href="#overview" class="text-gray-300 hover:text-white">Overview</a></li>
-                        <li><a href="#features" class="text-gray-300 hover:text-white">Features</a></li>
-                        <li><a href="#pricing" class="text-gray-300 hover:text-white">Pricing</a></li>
-                        <li><a href="#reviews" class="text-gray-300 hover:text-white">User Reviews</a></li>
-                        <li><a href="#conclusion" class="text-gray-300 hover:text-white">Conclusion</a></li>
+                        <li>
+                            <a href="#overview" class="text-gray-300 hover:text-white text-sm sm:text-base transition-colors flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i> Overview
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#features" class="text-gray-300 hover:text-white text-sm sm:text-base transition-colors flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i> Features
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#pricing" class="text-gray-300 hover:text-white text-sm sm:text-base transition-colors flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i> Pricing
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#reviews" class="text-gray-300 hover:text-white text-sm sm:text-base transition-colors flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i> Reviews
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#conclusion" class="text-gray-300 hover:text-white text-sm sm:text-base transition-colors flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i> Conclusion
+                            </a>
+                        </li>
                     </ul>
                 </div>
+                
                 <div>
-                    <h3 class="text-xl font-semibold mb-4">Official Resources</h3>
+                    <h3 class="text-lg sm:text-xl font-semibold mb-4">Official Resources</h3>
                     <ul class="space-y-2">
-                        <li><a href="https://www.myownfreehost.net/" class="text-gray-300 hover:text-white break-all">MyOwnFreeHost Website</a></li>
-                        <li><a href="https://ifastnet.com/" class="text-gray-300 hover:text-white break-all">iFastNet Website</a></li>
-                        <li><a href="https://www.byet.net/" class="text-gray-300 hover:text-white break-all">Byet Support Forum</a></li>
+                        <li>
+                            <a href="https://www.myownfreehost.net/" class="text-gray-300 hover:text-white text-sm sm:text-base transition-colors break-all">
+                                <i class="fas fa-external-link-alt text-xs mr-2"></i> MyOwnFreeHost Website
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://ifastnet.com/" class="text-gray-300 hover:text-white text-sm sm:text-base transition-colors break-all">
+                                <i class="fas fa-external-link-alt text-xs mr-2"></i> iFastNet Website
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.byet.net/" class="text-gray-300 hover:text-white text-sm sm:text-base transition-colors break-all">
+                                <i class="fas fa-external-link-alt text-xs mr-2"></i> Byet Support Forum
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
-            <!---<div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-                <p>© 2025 Web Hosting Research by <a href=https://github.com/druvx13>Druvx13</a>. All rights reserved.</p>
-            </div>--->
+            
+          <!---  <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>© 2025 Web Hosting Research. All rights reserved.</p>
+            </div> --->
         </div>
     </footer>
 
     <!-- Back to Top Button -->
-    <button id="backToTop" class="fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300">
+    <button id="backToTop" class="fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-indigo-700">
         <i class="fas fa-arrow-up"></i>
     </button>
 
     <script>
+        // Mobile Menu Toggle
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+        const openMobileMenuBtn = document.getElementById('openMobileMenu');
+        const closeMobileMenuBtn = document.getElementById('closeMobileMenu');
+        
+        openMobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+            mobileMenuOverlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        closeMobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+            mobileMenuOverlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        });
+        
+        mobileMenuOverlay.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+            mobileMenuOverlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        });
+        
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuOverlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            });
+        });
+        
         // Back to Top Button
         const backToTopButton = document.getElementById('backToTop');
         
@@ -651,14 +862,15 @@
                     targetElement.scrollIntoView({
                         behavior: 'smooth'
                     });
+                    
+                    // Update URL without jumping
+                    if (history.pushState) {
+                        history.pushState(null, null, targetId);
+                    } else {
+                        window.location.hash = targetId;
+                    }
                 }
             });
-        });
-        
-        // Mobile menu toggle (placeholder - would need more implementation)
-        document.querySelector('.md\\:hidden').addEventListener('click', function() {
-            // This would toggle a mobile menu in a real implementation
-            alert('Mobile menu would open here in a full implementation');
         });
     </script>
 </body>
